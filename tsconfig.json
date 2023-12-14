@@ -22,5 +22,12 @@
   },
   "include": [
     "src"
-  ]
+  ],
+  "baseUrl": ".",
+    "paths": {
+      "components/*": ["./components/*"],
+      "hooks/*": ["./hooks/*"],
+      "redux/*": ["./redux/*"],
+      "types/*": ["src/types/*"]
+    },
 }
