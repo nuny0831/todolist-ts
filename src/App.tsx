@@ -1,32 +1,62 @@
-import React from 'react';
+import {useEffect, useState} from 'react';
 import styled from 'styled-components';
+import {createTodo, deleteTodo, getTodos, updateTodo} from './api/todos';
 
 function App() {
+  const [title, setTitle] = useState<string>('');
+  const [content, setContent] = useState<string>('');
+  const [todos, setTodos] = useState<any[]>([]);
+
+  const clickAddTodo = async () => {
+    await createTodo(title, content);
+  };
+
+  const clickDeleteTodo = async (id: string) => {
+    await deleteTodo(id);
+  };
+
+  const clickUpdateTodo = async (id: string, isDone: boolean) => {
+    await updateTodo(id, isDone);
+  };
+
+  useEffect(() => {
+    getTodos().then(res => {
+      setTodos(res);
+    });
+  }, [todos]);
   return (
     <>
       <HomeBox>
         <TitleBox>
-          <TitleInput placeholder="제목"></TitleInput>
-          <TitleInput placeholder="할 일"></TitleInput>
-          <button>추가</button>
+          <TitleInput value={title} onChange={e => setTitle(e.target.value)} placeholder="제목"></TitleInput>
+          <TitleInput value={content} onChange={e => setContent(e.target.value)} placeholder="할 일"></TitleInput>
+          <button onClick={clickAddTodo}>추가</button>
         </TitleBox>
         <ListBox>
           할일
-          <Card>
-            <div>제목</div>
-            <div>내용</div>
-            <button>삭제</button>
-            <button>완료</button>
-          </Card>
+          {todos
+            .filter(todo => todo.isDone === false)
+            .map((todo, index) => (
+              <Card key={index}>
+                <div>제목{todo.title}</div>
+                <div>내용{todo.content}</div>
+                <button onClick={() => clickDeleteTodo(todo.id)}>삭제</button>
+                <button onClick={() => clickUpdateTodo(todo.id, true)}>완료</button>
+              </Card>
+            ))}
         </ListBox>
         <ListBox>
           완료
-          <Card>
-            <div>제목</div>
-            <div>내용</div>
-            <button>삭제</button>
-            <button>취소</button>
-          </Card>
+          {todos
+            .filter(todo => todo.isDone === true)
+            .map((todo, index) => (
+              <Card key={index}>
+                <div>제목{todo.title}</div>
+                <div>내용{todo.content}</div>
+                <button onClick={() => clickDeleteTodo(todo.id)}>삭제</button>
+                <button onClick={() => clickUpdateTodo(todo.id, false)}>취소</button>
+              </Card>
+            ))}
         </ListBox>
       </HomeBox>
     </>
