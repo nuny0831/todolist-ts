@@ -23,4 +23,4 @@ export type FirebaseTodo = {
   title: string;
   content: string;
   isDone: boolean;
-}
+};

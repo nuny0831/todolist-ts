@@ -4,6 +4,7 @@ import {toast} from 'react-toastify';
 import styled from 'styled-components';
 import {createTodo, deleteTodo, getTodos, updateTodo} from './api/todos';
 import {CreateTodoInput, DeleteTodoInput, Todo, UpdateTodoInput} from './types/todo';
+import Card from './components/Card';
 
 function App() {
   const queryClient = useQueryClient();
@@ -71,9 +72,9 @@ function App() {
   return (
     <>
       <HomeBox>
-          <NavBox>
-            <h1>My Todo List 💡</h1>
-          </NavBox>
+        <NavBox>
+          <h1>My Todo List 💡</h1>
+        </NavBox>
         <TitleBox>
           <TitleInput value={title} onChange={e => setTitle(e.target.value)} placeholder="제목"></TitleInput>
           <ContentInput value={content} onChange={e => setContent(e.target.value)} placeholder="내용"></ContentInput>
@@ -84,14 +85,7 @@ function App() {
           {todos
             ?.filter((todo: Todo) => todo.isDone === false)
             .map((todo: Todo, index) => (
-              <Card key={index}>
-                <TitleWorking>{todo.title}</TitleWorking>
-                <ContentWorking>{todo.content}</ContentWorking>
-                <ButtonBox>
-                  <button onClick={() => clickDeleteTodo(todo.id)}>삭제</button>
-                  <button onClick={() => clickUpdateTodo(todo.id, true)}>완료</button>
-                </ButtonBox>
-              </Card>
+              <Card key={index} todo={todo} clickDeleteTodo={clickDeleteTodo} clickUpdateTodo={clickUpdateTodo} />
             ))}
         </ListBox>
         <Title>Done😊</Title>
@@ -99,15 +93,7 @@ function App() {
           {todos
             ?.filter((todo: any) => todo.isDone === true)
             .map((todo: any, index) => (
-              <DoneCard key={index}>
-                <TitleWorking>{todo.title}</TitleWorking>
-                <ContentWorking>{todo.content}</ContentWorking>
-                <ButtonBox>
-                <button onClick={() => clickDeleteTodo(todo.id)}>삭제</button>
-                <button onClick={() => clickUpdateTodo(todo.id, false)}>취소</button>
-
-                </ButtonBox>
-              </DoneCard>
+              <Card key={index} todo={todo} clickDeleteTodo={clickDeleteTodo} clickUpdateTodo={clickUpdateTodo} />
             ))}
         </ListBox>
       </HomeBox>
@@ -129,42 +115,42 @@ const HomeBox = styled.div`
 `;
 
 const TitleInput = styled.input`
-margin: 10px;
-border: 0;
-height: 30px;
-width: 250px;
-margin-right: 30px;
-padding-left: 10px;
+  margin: 10px;
+  border: 0;
+  height: 30px;
+  width: 250px;
+  margin-right: 30px;
+  padding-left: 10px;
 `;
 
 const ContentInput = styled.input`
-margin: 10px;
-height: 30px;
-width: 500px;
-border: 0;
-margin-right: 30px;
-padding-left: 10px;
+  margin: 10px;
+  height: 30px;
+  width: 500px;
+  border: 0;
+  margin-right: 30px;
+  padding-left: 10px;
 `;
 
 const TitleBox = styled.div`
-height: 75px;
-display: flex;
-flex-direction: row;
-align-items: center;
-justify-content: center;
-padding-left: 30px;
-background-color: #8b000030;
-margin-bottom: 50px;
-width: 100%;  
+  height: 75px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding-left: 30px;
+  background-color: #8b000030;
+  margin-bottom: 50px;
+  width: 100%;
 
-button {
-  border: 0;
-  background-color: darkred;
-  color: white;
-  width: 80px;
-  height: 30px;
-  margin-right: 30px;
-}
+  button {
+    border: 0;
+    background-color: darkred;
+    color: white;
+    width: 80px;
+    height: 30px;
+    margin-right: 30px;
+  }
 `;
 
 const ListBox = styled.div`
@@ -172,57 +158,43 @@ const ListBox = styled.div`
   flex-direction: row;
 `;
 
-const Card = styled.div`
-background-color: #8b000090;
-width: 350px;
-height: 200px;
-color: white;
-display: flex;
-justify-content: center;
-flex-direction: column;
-align-items: center;
-margin : 20px;
-border-radius: 10px;
-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-`;
-
 const DoneCard = styled.div`
-background-color: #8b000020;
-width: 350px;
-height: 200px;
-color: darkred;
-display: flex;
-justify-content: center;
-flex-direction: column;
-align-items: center;
-margin : 20px;
-border-radius: 10px;
-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-
-button {
-  border: 0;
-  font-size: 15px;
-  margin: 10px;
-  padding: 7px;
-  background-color: white;
+  background-color: #8b000020;
+  width: 350px;
+  height: 200px;
   color: darkred;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
   border-radius: 10px;
-  font-weight: bold;
-}
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+
+  button {
+    border: 0;
+    font-size: 15px;
+    margin: 10px;
+    padding: 7px;
+    background-color: white;
+    color: darkred;
+    border-radius: 10px;
+    font-weight: bold;
+  }
 `;
 
 const TitleWorking = styled.div`
-font-size: 30px;
+  font-size: 30px;
   margin-bottom: 10px;
-  `;
+`;
 
-  const ContentWorking = styled.div`
+const ContentWorking = styled.div`
   font-size: 15px;
   margin-bottom: 20px;
-  `;
+`;
 
 const Title = styled.div`
- font-size: 50px;
+  font-size: 50px;
   margin: 10px;
 `;
 
@@ -244,20 +216,17 @@ const ButtonBox = styled.div`
     border-radius: 10px;
     font-weight: bold;
   }
-
 `;
 
 const NavBox = styled.div`
-display: flex;
-justify-content: space-between;
-color: white;
-background-color: darkred;
-padding: 0 50px 0 50px;
-width: 100%;
-height: 75px;
-align-items: center;
-font-size: 30px;
-font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  color: white;
+  background-color: darkred;
+  padding: 0 50px 0 50px;
+  width: 100%;
+  height: 75px;
+  align-items: center;
+  font-size: 30px;
+  font-weight: bold;
 `;
-
-
