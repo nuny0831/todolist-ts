@@ -72,6 +72,7 @@ const DoneCard = styled.div`
     color: darkred;
     border-radius: 10px;
     font-weight: bold;
+    cursor: pointer;
   }
 `;
 
@@ -102,5 +103,6 @@ const ButtonBox = styled.div`
     color: darkred;
     border-radius: 10px;
     font-weight: bold;
+    cursor: pointer;
   }
 `;

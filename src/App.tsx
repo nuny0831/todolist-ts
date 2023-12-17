@@ -6,6 +6,7 @@ import {createTodo, deleteTodo, getTodos, updateTodo} from './api/todos';
 import {CreateTodoInput, DeleteTodoInput, Todo, UpdateTodoInput} from './types/todo';
 import Card from './components/Card';
 import Swal from 'sweetalert2';
+import {BarLoader} from 'react-spinners';
 
 function App() {
   const queryClient = useQueryClient();
@@ -78,7 +79,7 @@ function App() {
     updateTodoMutate({id, isDone});
   };
 
-  if (isLoading) return <div>로딩중...</div>;
+  if (isLoading) return <BarLoader color={'darkred'} height={10} width={300} />;
   return (
     <>
       <HomeBox>
@@ -160,6 +161,7 @@ const TitleBox = styled.div`
     width: 80px;
     height: 30px;
     margin-right: 30px;
+    cursor: pointer;
   }
 `;
 
@@ -168,64 +170,9 @@ const ListBox = styled.div`
   flex-direction: row;
 `;
 
-const DoneCard = styled.div`
-  background-color: #8b000020;
-  width: 350px;
-  height: 200px;
-  color: darkred;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  margin: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-
-  button {
-    border: 0;
-    font-size: 15px;
-    margin: 10px;
-    padding: 7px;
-    background-color: white;
-    color: darkred;
-    border-radius: 10px;
-    font-weight: bold;
-  }
-`;
-
-const TitleWorking = styled.div`
-  font-size: 30px;
-  margin-bottom: 10px;
-`;
-
-const ContentWorking = styled.div`
-  font-size: 15px;
-  margin-bottom: 20px;
-`;
-
 const Title = styled.div`
   font-size: 50px;
   margin: 10px;
-`;
-
-const ButtonBox = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  width: 100%;
-  margin: 10px;
-  border: 0;
-
-  button {
-    border: 0;
-    font-size: 15px;
-    margin: 10px;
-    padding: 7px;
-    background-color: white;
-    color: darkred;
-    border-radius: 10px;
-    font-weight: bold;
-  }
 `;
 
 const NavBox = styled.div`
