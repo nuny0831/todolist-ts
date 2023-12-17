@@ -1,29 +1,73 @@
-import {useEffect, useState} from 'react';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {useState} from 'react';
+import {toast} from 'react-toastify';
 import styled from 'styled-components';
 import {createTodo, deleteTodo, getTodos, updateTodo} from './api/todos';
+import {CreateTodoInput, DeleteTodoInput, Todo, UpdateTodoInput} from './types/todo';
 
 function App() {
+  const queryClient = useQueryClient();
+
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
-  const [todos, setTodos] = useState<any[]>([]);
 
-  const clickAddTodo = async () => {
-    await createTodo(title, content);
-  };
+  const {isLoading, data: todos} = useQuery<Todo[]>({
+    queryKey: ['todos'],
+    queryFn: getTodos,
+  });
 
-  const clickDeleteTodo = async (id: string) => {
-    await deleteTodo(id);
-  };
+  const {mutate: createTodoMutate} = useMutation({
+    mutationFn: (input: CreateTodoInput) => createTodo(input.title, input.content),
+    onSuccess: () => {
+      setTitle('');
+      setContent('');
+      queryClient.invalidateQueries({queryKey: ['todos']});
+    },
+    onError: err => {
+      console.log(err);
+    },
+  });
 
-  const clickUpdateTodo = async (id: string, isDone: boolean) => {
-    await updateTodo(id, isDone);
-  };
+  const {mutate: deleteTodoMutate} = useMutation({
+    mutationFn: (input: DeleteTodoInput) => deleteTodo(input.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['todos']});
+    },
+    onError: err => {
+      console.log(err);
+    },
+  });
 
-  useEffect(() => {
-    getTodos().then(res => {
-      setTodos(res);
+  const {mutate: updateTodoMutate} = useMutation({
+    mutationFn: (input: UpdateTodoInput) => updateTodo(input.id, input.isDone),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['todos']});
+    },
+    onError: err => {
+      console.log(err);
+    },
+  });
+
+  const clickAddTodo = (): void => {
+    if (!title || !content) {
+      toast.error('제목과 내용을 입력해주세요');
+      return;
+    }
+    createTodoMutate({
+      title,
+      content,
     });
-  }, [todos]);
+  };
+
+  const clickDeleteTodo = (id: string): void => {
+    deleteTodoMutate({id});
+  };
+
+  const clickUpdateTodo = (id: string, isDone: boolean): void => {
+    updateTodoMutate({id, isDone});
+  };
+
+  if (isLoading) return <div>로딩중...</div>;
   return (
     <>
       <HomeBox>
@@ -35,8 +79,8 @@ function App() {
         <ListBox>
           할일
           {todos
-            .filter(todo => todo.isDone === false)
-            .map((todo, index) => (
+            ?.filter((todo: Todo) => todo.isDone === false)
+            .map((todo: Todo, index) => (
               <Card key={index}>
                 <div>제목{todo.title}</div>
                 <div>내용{todo.content}</div>
@@ -48,8 +92,8 @@ function App() {
         <ListBox>
           완료
           {todos
-            .filter(todo => todo.isDone === true)
-            .map((todo, index) => (
+            ?.filter((todo: any) => todo.isDone === true)
+            .map((todo: any, index) => (
               <Card key={index}>
                 <div>제목{todo.title}</div>
                 <div>내용{todo.content}</div>
