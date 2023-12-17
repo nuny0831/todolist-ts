@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import {createTodo, deleteTodo, getTodos, updateTodo} from './api/todos';
 import {CreateTodoInput, DeleteTodoInput, Todo, UpdateTodoInput} from './types/todo';
 import Card from './components/Card';
+import Swal from 'sweetalert2';
 
 function App() {
   const queryClient = useQueryClient();
@@ -60,8 +61,17 @@ function App() {
     });
   };
 
-  const clickDeleteTodo = (id: string): void => {
-    deleteTodoMutate({id});
+  const clickDeleteTodo = async (id: string): Promise<void> => {
+    const res = await Swal.fire({
+      title: '삭제하시겠습니까?',
+      showCancelButton: true,
+      confirmButtonText: '삭제',
+      cancelButtonText: '취소',
+    });
+
+    if (res.isConfirmed) {
+      deleteTodoMutate({id});
+    }
   };
 
   const clickUpdateTodo = (id: string, isDone: boolean): void => {
